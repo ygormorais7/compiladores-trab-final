@@ -1,0 +1,3 @@
+teste_str_error{
+    str 1arroz;
+}

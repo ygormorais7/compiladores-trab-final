@@ -1,0 +1,10 @@
+cod_PI {
+    float circunferencia;
+    float diametro;
+    float pi;
+
+    pi = circunferencia/diametro
+
+    print("Resultado:");
+    print(pi);
+}
