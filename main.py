@@ -1,6 +1,11 @@
+import sys
 from lexer import Lexer
 
-with open('programas.LPMS/code1.txt', 'r') as file:
+if len(sys.argv) != 2:
+    sys.exit(1)
+
+dados = sys.argv[1]
+with open(f'{dados}', 'r') as file:
     data = file.read()
 
 lexer = Lexer()

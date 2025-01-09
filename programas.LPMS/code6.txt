@@ -1,0 +1,8 @@
+Program logico{
+    bool a = true;
+    bool b, c;
+
+    b = 2>3;
+
+    print(a==b);
+}

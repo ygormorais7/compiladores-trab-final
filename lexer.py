@@ -5,15 +5,16 @@ class Lexer:
     tokens = [
     'PROGRAM',
     'CONST', 'INT', 'FLOAT', 'BOOL', 'STRING',
+    'TRUE', 'FALSE',
     'IF', 'ELSE', 'WHILE', 'PRINT', 'INPUT',
     'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'EQ', 'NEQ', 'LT', 'GT', 'LEQ', 'GEQ', 'NOT', 'ASSIGN',
-    'LBRACE', 'RBRACE', 'LPAREN', 'RPAREN', 'SEMICOLON',
+    'LBRACE', 'RBRACE', 'LPAREN', 'RPAREN', 'SEMICOLON', 'COLON',
     'ID','INTEGER_CONST','FLOAT_CONST','STRING_CONST'
     ]
 
     # Palavras reservadas
     reserved = {
-        'program': 'PROGRAM',
+        'Program': 'PROGRAM',
         'int': 'INT',
         'float': 'FLOAT',
         'bool': 'BOOL',
@@ -23,7 +24,9 @@ class Lexer:
         'else': 'ELSE',
         'while': 'WHILE',
         'print': 'PRINT',
-        'input': 'INPUT'
+        'input': 'INPUT',
+        'true': 'TRUE',
+        'false': 'FALSE'
     }
 
     # Regras de expressões regulares para tokens simples
@@ -46,6 +49,7 @@ class Lexer:
     t_LPAREN = r'\('
     t_RPAREN = r'\)'
     t_SEMICOLON = r';'
+    t_COLON = r','
     t_ignore = ' \t'
     t_ASSIGN = r'='
 

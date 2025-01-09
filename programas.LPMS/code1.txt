@@ -4,7 +4,7 @@ cod_PI {
     float pi;
 
     pi = circunferencia/diametro
-
+    1
     print("Resultado:");
     print(pi);
 }

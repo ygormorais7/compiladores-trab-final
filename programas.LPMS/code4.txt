@@ -1,6 +1,5 @@
-Program_Fatorial {
-    int fat;
-    int res;
+Program Fatorial {
+    int fat, res;
 
     res = 1;
 
