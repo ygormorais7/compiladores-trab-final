@@ -12,3 +12,5 @@ while True:
     if not tok:
         break
     print(f"<{tok.type}, {tok.value}>")
+
+print(lexer.symbolTable)

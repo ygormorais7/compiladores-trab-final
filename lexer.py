@@ -52,6 +52,7 @@ class Lexer:
 
     def __init__(self):
         self.lexer = None
+        self.symbolTable = {}
 
     # Criar o lexer
     def build(self, **kwargs):
@@ -73,7 +74,9 @@ class Lexer:
     # Regras de expressões regulares para tokens complexos
     def t_ID(self, t):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
-        t.type = self.reserved.get(t.value, 'ID')
+        t.type = self.reserved.get(t.value, 'ID') # verifica se é palavra reservada
+        if t.type == 'ID':
+            self.symbolTable[t.value] = {'type': 'ID'}
         return t
 
     def t_INTEGER_CONST(self, t):
@@ -89,7 +92,7 @@ class Lexer:
     # Identifica "" como aprte da string
     def t_STRING_CONST(self, t):
         r'\".*?\"'
-        t.value = t.value[1:-1]
+        t.value = t.value[1:-1] # pega apenas o conteúdo dentro das aspas 
         return t
 
     def t_newline(self, t):
