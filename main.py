@@ -1,6 +1,6 @@
 from lexer import Lexer
 
-with open('programas.LPMS/code5.txt', 'r') as file:
+with open('programas.LPMS/code1.txt', 'r') as file:
     data = file.read()
 
 lexer = Lexer()

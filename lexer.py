@@ -2,15 +2,14 @@ import ply.lex as lex
 
 class Lexer:
     # Lista de tokens
-    tokens = (
-        'PROGRAM', 'INT', 'FLOAT', 'BOOL', 'CONST',
-        'IF', 'ELSE', 'WHILE', 'PRINT', 'INPUT',
-        'PLUS', 'MINUS', 'TIMES', 'DIVIDE',
-        'EQ', 'NEQ', 'LT', 'GT', 'LEQ', 'GEQ', 'NOT',
-        'LBRACE', 'RBRACE', 'LPAREN', 'RPAREN', 'SEMICOLON', 'ASSIGN',
-        'ID',
-        'INTEGER_CONST', 'FLOAT_CONST', 'STRING_CONST'
-    )
+    tokens = [
+    'PROGRAM',
+    'CONST', 'INT', 'FLOAT', 'BOOL', 'STRING',
+    'IF', 'ELSE', 'WHILE', 'PRINT', 'INPUT',
+    'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 'EQ', 'NEQ', 'LT', 'GT', 'LEQ', 'GEQ', 'NOT', 'ASSIGN',
+    'LBRACE', 'RBRACE', 'LPAREN', 'RPAREN', 'SEMICOLON',
+    'ID','INTEGER_CONST','FLOAT_CONST','STRING_CONST'
+    ]
 
     # Palavras reservadas
     reserved = {
@@ -18,6 +17,7 @@ class Lexer:
         'int': 'INT',
         'float': 'FLOAT',
         'bool': 'BOOL',
+        'str': 'STRING',
         'const': 'CONST',
         'if': 'IF',
         'else': 'ELSE',
@@ -46,7 +46,7 @@ class Lexer:
     t_LPAREN = r'\('
     t_RPAREN = r'\)'
     t_SEMICOLON = r';'
-    t_ignore = " \t"
+    t_ignore = ' \t'
     t_ASSIGN = r'='
 
     def __init__(self):
