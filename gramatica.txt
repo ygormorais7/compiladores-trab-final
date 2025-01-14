@@ -1,0 +1,43 @@
+<program> ::= "Program" <ID> "{" <decl_list> <stmt_list> "}"
+
+<decl_list> ::= <decl> <decl_list> | ε
+<decl> ::= "const" <ID> "=" <literal> ";" 
+          | <type> <id_list> ";"
+
+<type> ::= "int" 
+         | "float" 
+         | "bool" 
+         | "str"
+
+<id_list> ::= <ID> <id_tail>
+<id_tail> ::= "," <ID> <id_tail> | ε
+
+<stmt_list> ::= <stmt> <stmt_list> | ε
+<stmt> ::= <assign_stmt>
+          | <print_stmt>
+          | <input_stmt>
+          | <if_stmt>
+          | <while_stmt>
+
+<assign_stmt> ::= <ID> "=" <exp> ";"
+<print_stmt> ::= "print" "(" <exp_list> ")" ";"
+<input_stmt> ::= "input" "(" <id_list> ")" ";"
+
+<if_stmt> ::= "if" "(" <exp> ")" "{" <stmt_list> "}" <else_part>
+<else_part> ::= "else" "{" <stmt_list> "}" | ε
+
+<while_stmt> ::= "while" "(" <exp> ")" "{" <stmt_list> "}"
+
+<exp_list> ::= <exp> <exp_tail>
+<exp_tail> ::= "," <exp_list> | ε
+
+<exp> ::= <exp_relational>
+<exp_relational> ::= <term_arithmetic>
+                     | <term_arithmetic> (<rel_op>) (<term_arithmetic>)
+                     
+<rel_op>::=  '==' 
+         | '!=' 
+         | '>=' 
+         | '<=' 
+         | '>' 
+         | '<'

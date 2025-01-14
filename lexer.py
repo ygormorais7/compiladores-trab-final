@@ -99,6 +99,16 @@ class Lexer:
         t.value = t.value[1:-1] # pega apenas o conteúdo dentro das aspas 
         return t
 
+    def t_TRUE(self, t):
+        r'true'
+        t.value = True
+        return t
+
+    def t_FALSE(self, t):
+        r'false'
+        t.value = False
+        return t
+
     def t_newline(self, t):
         r'\n+'
         t.lexer.lineno += len(t.value)
