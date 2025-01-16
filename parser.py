@@ -98,12 +98,14 @@ class Parser:
     def p_assign_stmt(self, p):
         '''assign_stmt : ID ASSIGN exp SEMICOLON'''
         var_type = self.symbol_table.lookup(p[1])
-    
         value_type = self.symbol_table.check_type(p[3])  # Função que verifica o tipo da expressão
+
+        if var_type == 'str' and not isinstance(p[3], str):
+            raise Exception(f"Erro semântico: Atribuição inválida para variável do tipo 'str'. Esperado string entre aspas, mas encontrado {p[3]}.")
 
         if value_type != var_type:
             raise Exception(f"Erro semântico: Tipo incompatível na atribuição de '{p[1]}'. Esperado {var_type}, mas encontrado {value_type}.")
-    
+
         self.symbol_table.assign(p[1], p[3])
         p[0] = ('assign', p[1], p[3])
 
@@ -247,4 +249,14 @@ class Parser:
 
 
     def p_error(self, p):
-        print(f"Erro de sintaxe: {p.value} na linha {p.lineno}")
+        if p:
+            if p.type == 'SEMICOLON':
+                print(f"Erro de sintaxe: Esperado ';' antes de '{p.value}' na linha {p.lineno}")
+            else:
+                prev_token = self.parser.symstack[-1]
+                if prev_token.type in ['ID', 'INTEGER_CONST', 'FLOAT_CONST', 'STRING_CONST', 'BOOL_CONST']:
+                    print(f"Erro de sintaxe: Esperado ';' antes de '{p.value}' na linha {p.lineno}")
+                else:
+                    print(f"Erro de sintaxe: '{p.value}' inesperado na linha {p.lineno}")
+        else:
+            print("Erro de sintaxe: Fim de arquivo inesperado")

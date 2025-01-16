@@ -1,3 +1,5 @@
 Program teste_str_error{
-    str 1arroz;
+    str arroz;
+
+    arroz = "aaaa";
 }

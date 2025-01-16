@@ -83,20 +83,20 @@ class Lexer:
             self.symbolTable[t.value] = {'type': 'ID'}
         return t
 
-    def t_INTEGER_CONST(self, t):
-        r'\d+'
-        t.value = int(t.value)
-        return t
-
     def t_FLOAT_CONST(self, t):
         r'\d+\.\d+'
         t.value = float(t.value)
         return t
 
+    def t_INTEGER_CONST(self, t):
+        r'\d+'
+        t.value = int(t.value)
+        return t
+
     # Identifica "" como aprte da string
     def t_STRING_CONST(self, t):
         r'\".*?\"'
-        t.value = t.value[1:-1] # pega apenas o conteúdo dentro das aspas 
+        t.value = t.value 
         return t
 
     def t_TRUE(self, t):
