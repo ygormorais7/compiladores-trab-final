@@ -1,0 +1,7 @@
+Program dsadsa{
+    bool var;
+
+    var = !(true == true);
+    var = -(true == true);
+    var = -(true == 2);
+}

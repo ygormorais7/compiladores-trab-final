@@ -2,14 +2,22 @@ class SymbolTable:
     def __init__(self):
         self.table = {}
 
-    def declare(self, name, var_type):
+    def declare(self, name, var_type, value=None):
         if name in self.table:
             raise Exception(f"Erro semântico: Variável '{name}' já declarada.")
-        self.table[name] = {'type': var_type, 'value': None}
+        if var_type == 'const':
+            self.table[name] = {'type': type(value), 'value': None, 'const': True}
+        else:
+            self.table[name] = {'type': var_type, 'value': None}
 
     def assign(self, name, value):
         if name not in self.table:
             raise Exception(f"Erro semântico: Variável '{name}' não declarada.")
+        
+        if 'const' in self.table[name].keys():
+            if self.table[name]['value'] != None:
+                raise Exception(f"Erro ao reatribuir valor ao const")
+            
         self.table[name]['value'] = value
 
     def lookup(self, name):

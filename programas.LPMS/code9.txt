@@ -1,0 +1,8 @@
+Program not{
+    bool var;
+    bool var2;
+
+    var = true;
+
+    var2 = !var;
+}

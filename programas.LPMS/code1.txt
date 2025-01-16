@@ -3,6 +3,9 @@ Program cod_PI {
     float diametro;
     float pi;
 
+    circunferencia = 1.1;
+    diametro = 1.2;
+
     pi = circunferencia/diametro;
     
     print("Resultado:");

@@ -14,7 +14,20 @@ class Parser:
         self.parser = yacc.yacc(module=self)
     
     def parse(self, data):
-        return self.parser.parse(data, lexer=self.lexer.lexer)
+        result = self.parser.parse(data, lexer=self.lexer.lexer)
+        self.print_derivation_tree(result)
+        return result
+
+    def print_derivation_tree(self, node, indent=''):
+        if isinstance(node, tuple):
+            print(indent + str(node[0]))
+            for child in node[1:]:
+                self.print_derivation_tree(child, indent + ' __ ')
+        elif isinstance(node, list):
+            for item in node:
+                self.print_derivation_tree(item, indent)
+        else:
+            print(indent + str(node))
 
     # Regras da gramática
     def p_program(self, p):
@@ -33,15 +46,16 @@ class Parser:
     def p_decl(self, p):
         '''decl : type ID ASSIGN literal SEMICOLON
                 | type id_list SEMICOLON'''
-        
+
         if len(p) == 6:  # Declaração de variável com atribuição
             var_type = p[1]
             value_type = self.symbol_table.check_type(p[4])  # Função que verifica o tipo de literal
 
-            if value_type != var_type:
+            if value_type != var_type and var_type != 'const':
                 raise Exception(f"Erro semântico: Tipo incompatível na declaração de '{p[2]}'. Esperado {var_type}, mas encontrado {value_type}.")
             
-            self.symbol_table.declare(p[2], p[1]) 
+            
+            self.symbol_table.declare(p[2], p[1], p[4]) 
             self.symbol_table.assign(p[2], p[4])  # Atribui o valor à variável
             p[0] = ('var_decl_with_assignment', p[1], p[2], p[4])
 
@@ -98,13 +112,13 @@ class Parser:
     def p_assign_stmt(self, p):
         '''assign_stmt : ID ASSIGN exp SEMICOLON'''
         var_type = self.symbol_table.lookup(p[1])
-        value_type = self.symbol_table.check_type(p[3])  # Função que verifica o tipo da expressão
+        #value_type = self.symbol_table.check_type(p[3])  # Função que verifica o tipo da expressão
 
         if var_type == 'str' and not isinstance(p[3], str):
             raise Exception(f"Erro semântico: Atribuição inválida para variável do tipo 'str'. Esperado string entre aspas, mas encontrado {p[3]}.")
 
-        if value_type != var_type:
-            raise Exception(f"Erro semântico: Tipo incompatível na atribuição de '{p[1]}'. Esperado {var_type}, mas encontrado {value_type}.")
+        #if value_type != var_type:
+        #    raise Exception(f"Erro semântico: Tipo incompatível na atribuição de '{p[1]}'. Esperado {var_type}, mas encontrado {value_type}.")
 
         self.symbol_table.assign(p[1], p[3])
         p[0] = ('assign', p[1], p[3])
@@ -179,7 +193,8 @@ class Parser:
             left_type = self.symbol_table.check_type(p[1])
             right_type = self.symbol_table.check_type(p[3])
 
-            if left_type != right_type or left_type == 'bool' or right_type == 'bool':
+            if left_type == 'bool' or left_type == 'str' or right_type == 'bool' or right_type == 'str':
+            #if left_type != right_type or left_type == 'bool' or right_type == 'bool':
                 raise Exception(f"Erro semântico: Operação aritmética inválida entre tipos {left_type} e {right_type}.")
 
             p[0] = ('binop', p[2], p[1], p[3])
@@ -190,11 +205,33 @@ class Parser:
     def p_term(self, p):
         '''term : term TIMES factor
                 | term DIVIDE factor
-                | factor'''
+                | factor
+                | unary'''
+    
         if len(p) == 4:
+            left_type = self.symbol_table.check_type(p[1])
+            right_type = self.symbol_table.check_type(p[3])
+            if left_type == 'bool' or left_type == 'str' or right_type == 'bool' or right_type == 'str':
+                raise Exception(f"Erro semântico: Operação aritmética inválida entre tipos {left_type} e {right_type}.")
+
             p[0] = ('binop', p[2], p[1], p[3])
         else:
             p[0] = p[1]
+        
+    def p_unary(self,p):
+        '''unary : NOT factor
+                |  MINUS factor'''
+        
+        if len(p) == 3:
+            type_factor = self.symbol_table.check_type(p[2])
+            if type_factor != 'bool' and type_factor != 'str' and p[1] == '-':
+                p[0] = ('unary', p[1], p[2])
+
+            elif type_factor == 'bool' and p[1] == '!':
+                p[0] = ('unary', p[1], p[2])
+
+            else:
+                raise Exception(f"Erro semântico: Operação unária inválida.")               
 
 
     def p_bool_const(self, p):

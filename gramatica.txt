@@ -33,6 +33,9 @@
 
 <exp>               ::= <exp_relational>
 
+<exp_unary>         ::= "-" <factor>
+                        | "!" <factor>
+
 <exp_relational>    ::= <exp_arithmetic>
                         | <exp_arithmetic> (<rel_op>) (<exp_arithmetic>)
 
@@ -43,6 +46,7 @@
 <term>              ::= <term> "*" <factor>
                         | <term> "/" <factor>
                         | <factor>
+                        | <exp_unary> 
 
 <factor>            ::= <id>
                         | int_const
