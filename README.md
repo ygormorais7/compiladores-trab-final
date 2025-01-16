@@ -6,12 +6,8 @@
 - pip install ply
 - deactivate (desativar a venv)
 
-# Como executar o lexer:
+# Como executar:
 
 - Iniciar a venv com o PLY instalado
-- Dentro do arquivo main.py escolher qual código deseja executar (olhar na pasta programas.LPMS)
-- python main.py
-
-# Como executar o parser:
-
-# ...
+- No prompt de comando executar: python main.py `<archive>`
+- No lugar de `<archive>` coloque um arquivo (sugestão: algum code.txt dentro de LPMS/)
