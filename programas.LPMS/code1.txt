@@ -1,4 +1,4 @@
-cod_PI {
+Program cod_PI {
     float circunferencia;
     float diametro;
     float pi;

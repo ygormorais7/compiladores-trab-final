@@ -30,12 +30,12 @@ class Parser:
             p[0] = []
 
     def p_decl(self, p):
-        '''decl : CONST ID ASSIGN literal SEMICOLON
+        '''decl : type ID ASSIGN literal SEMICOLON
                 | type id_list SEMICOLON'''
-        if len(p) == 6:  # Declaração de constante
-            self.symbol_table.declare(p[2], 'const')
-            self.symbol_table.assign(p[2], p[4])
-            p[0] = ('const_decl', p[2], p[4])
+        if len(p) == 6:  # Declaração de variável com atribuição
+            self.symbol_table.declare(p[2], p[1]) 
+            self.symbol_table.assign(p[2], p[4])  # Atribui o valor à variável
+            p[0] = ('var_decl_with_assignment', p[1], p[2], p[4])
         else:  # Declaração de variável
             for var in p[2]:
                 self.symbol_table.declare(var, p[1])
@@ -45,7 +45,8 @@ class Parser:
         '''type : INT
                 | FLOAT
                 | BOOL
-                | STRING'''
+                | STRING
+                | CONST'''
         p[0] = p[1]
 
     def p_id_list(self, p):

@@ -1,4 +1,4 @@
-teste_str{
+Program teste_str{
     str a_1;
     str b_;
 }
