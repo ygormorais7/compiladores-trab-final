@@ -3,5 +3,5 @@ Program const2{
     int var2 = 2;
 
 
-    var = var2/var;
+    var2 = var2/var;
 }
