@@ -1,4 +1,6 @@
 Program teste_str{
-    str a_1;
+    str a_1 = "aaa";
     str b_;
+    
+    b_ = "bbb";
 }
