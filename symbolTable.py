@@ -42,8 +42,11 @@ class SymbolTable:
 
     def lookup(self, p, name):
         if name not in self.table:
-            print(f"Erro semântico na linha {p.lineno(2)}: Variável '{name}' não declarada.")
-            sys.exit(1)
+            if type(name).__name__ != 'str' or (type(name).__name__ == 'str' and (name == 'true' or name == 'false')):
+                raise Exception(f"Erro semântico na linha {p.lineno(2)}: Variável '{name}' não declarada.")
+            else:
+                print(f"Erro semântico na linha {p.lineno(2)}: Variável '{name}' não declarada.")
+                sys.exit(1)
         return self.table[name]['type']
 
 
@@ -66,9 +69,16 @@ class SymbolTable:
             if op[0] == 'binop':
                 left_type = self.check_type(p, op[2])
                 right_type = self.check_type(p, op[3])
-                if left_type != right_type:
-                    print(f"Erro semântico na linha {p.lineno(2)}: Operação inválida entre tipos {left_type} e {right_type}.")
-                    sys.exit(1)
+
+                if left_type == 'str':
+                    left_type = self.lookup(p, op[2])
+                
+                if right_type == 'str':
+                    right_type = self.lookup(p, op[3])
+
+                if left_type != 'float' and left_type != "int" or right_type != 'float' and right_type != "int":
+                     print(f"Erro semântico na linha {p.lineno(2)}: Operação inválida entre tipos {left_type} e {right_type}.")
+                     sys.exit(1)
                 return left_type
             
             elif op[0] == 'relop':  # Operação relacional
@@ -88,7 +98,7 @@ class SymbolTable:
                     else:
                         right_type = self.check_type(p, op[2]) # Verifica outros tipos mais internos
 
-                if left_type != right_type:
-                    print(f"Erro semântico na linha {p.lineno(2)}: Comparação inválida entre tipos {left_type} e {right_type}.")
-                    sys.exit(1)
+                # if left_type != right_type:
+                #     print(f"Erro semântico na linha {p.lineno(2)}: Comparação inválida entre tipos {left_type} e {right_type}.")
+                #     sys.exit(1)
                 return 'bool'  # Operações relacionais retornam um booleano

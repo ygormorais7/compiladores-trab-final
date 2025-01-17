@@ -1,4 +1,9 @@
 Program erroSemantico_p_decl{
-    int x = "aa";
+    str x;
+    int aaa;
+    float y;
+
+    aaa = 2-(1+2);
+
 
 }

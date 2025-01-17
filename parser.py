@@ -135,8 +135,17 @@ class Parser:
 
         var_type = self.symbol_table.lookup(p, p[1])
 
+        try:
+            value_type = self.symbol_table.lookup(p, p[3])
+        except:
+            value_type = self.symbol_table.check_type(p, p[3])
+
         if var_type == 'str' and not isinstance(p[3], str):
-            print(f"Erro semântico na linha {p.lineno(1)}: Atribuição inválida. Esperado string entre aspas, mas encontrado {p[3]}.")
+            print(f"Erro semântico na linha {p.lineno(1)}: Atribuição inválida. Esperado string entre aspas, mas encontrado {value_type}.")
+            sys.exit(1)
+
+        if value_type != var_type:
+            print(f"Erro semântico na linha {p.lineno(2)}: Atribuição inválida. Esperado {var_type}, mas encontrado {value_type}.")
             sys.exit(1)
 
         self.symbol_table.assign(p, p[1], p[3])
@@ -222,16 +231,19 @@ class Parser:
         '''exp_arithmetic : exp_arithmetic PLUS term
                      | exp_arithmetic MINUS term
                      | term'''
-        
         if len(p) == 4:
             try:
                 left_type = self.symbol_table.table[p[1]]['type'] # No lugar da função lookup
+                print(f'Left type {left_type, p[1]} na tabela de símbolos')
             except:
                 left_type = self.symbol_table.check_type(p, p[1])
+                print(f'Left type {left_type, p[1]} não está na tabela de símbolos')
             try:
                 right_type = self.symbol_table.table[p[3]]['type'] # No lugar da função lookup
+                print(f'Right type {right_type, p[3]} na tabela de símbolos')
             except:
                 right_type = self.symbol_table.check_type(p ,p[3])
+                print(f'Right type {right_type, p[3]} não está na tabela de símbolos')
 
             if left_type == 'bool' or left_type == 'str' or right_type == 'bool' or right_type == 'str':
                 print(f"Erro semântico na linha {p.lineno(2)}: Operação aritmética inválida entre tipos {left_type} e {right_type}.")
@@ -274,9 +286,10 @@ class Parser:
         if len(p) == 3:
             try:
                 type_factor = self.symbol_table.table[p[2]]['type'] # No lugar da função lookup
+                
             except:
                 type_factor = self.symbol_table.check_type(p, p[2])
-
+                
             if type_factor != 'bool' and type_factor != 'str' and p[1] == '-':
                 p[0] = ('unary', p[1], p[2])
 
