@@ -16,8 +16,17 @@ class Parser:
     
     def parse(self, data):
         result = self.parser.parse(data, lexer=self.lexer.lexer)
-        self.print_derivation_tree(result)
-        return result
+        formatted_result = self.format_output(result)
+        #self.print_derivation_tree(result)
+        return formatted_result
+    
+    def format_output(self, node):
+        if isinstance(node, tuple):
+            return f"({node[0]}, {', '.join(self.format_output(child) for child in node[1:])})"
+        elif isinstance(node, list):
+            return f"[{', '.join(self.format_output(item) for item in node)}]"
+        else:
+            return str(node)
 
     def print_derivation_tree(self, node, indent=''):
         if isinstance(node, tuple):

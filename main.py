@@ -26,4 +26,4 @@ parser.build()
 
 result = parser.parse(data)
 print(result)
-print(parser.lexer.symbolTable)
+#print(parser.lexer.symbolTable)
