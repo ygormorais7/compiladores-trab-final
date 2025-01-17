@@ -20,8 +20,7 @@ class SymbolTable:
         if name in self.table:
             print(f"Erro semântico na linha {p.lineno(3)}: Variável '{name}' já declarada.")
             sys.exit(1)
-        
-        print("26",self.check_type(value))
+
         if var_type == 'const':
             self.table[name] = {'type': self.check_type(value), 'value': None, 'const': True}
         else:
