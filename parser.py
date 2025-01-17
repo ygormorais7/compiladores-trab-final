@@ -34,7 +34,7 @@ class Parser:
     def p_program(self, p):
         '''program : PROGRAM ID LBRACE decl_list stmt_list RBRACE'''
         
-        p[0] = ('<program>', p[2], p[4], p[5])
+        p[0] = ('program', p[2], p[4], p[5])
 
     def p_decl_list(self, p):
         '''decl_list : decl decl_list
@@ -52,7 +52,11 @@ class Parser:
 
         if len(p) == 6:  # Declaração de variável com atribuição
             var_type = p[1]
-            value_type = self.symbol_table.check_type(p[4])  # Função que verifica o tipo de literal
+            try:
+                value_type = self.symbol_table.table[p[4]]['type'] # No lugar da função lookup
+            except:
+                value_type = self.symbol_table.check_type(p, p[4])
+            #value_type = self.symbol_table.check_type(p, p[4])  # Função que verifica o tipo de literal
 
             if value_type != var_type and var_type != 'const':
                 print(f"Erro semântico na linha {p.lineno(2)}: Tipo incompatível na declaração de '{p[2]}'. Esperado {var_type}, mas encontrado {value_type}.")
@@ -60,12 +64,12 @@ class Parser:
 
             self.symbol_table.declare(p, p[2], p[1], p[4])
             self.symbol_table.assign(p, p[2], p[4])  # Atribui o valor à variável
-            p[0] = ('<var_decl_with_assignment>', p[1], p[2], p[4])
+            p[0] = ('var_decl_with_assignment', p[1], p[2], p[4])
 
         else:  # Declaração de variável
             for var in p[2]:
                 self.symbol_table.declare(p, var, p[1])
-            p[0] = ('<var_decl>', p[1], p[2])
+            p[0] = ('var_decl', p[1], p[2])
 
 
     def p_type(self, p):
@@ -127,13 +131,13 @@ class Parser:
             sys.exit(1)
 
         self.symbol_table.assign(p, p[1], p[3])
-        p[0] = ('<assign>', p[1], p[3])
+        p[0] = ('assign', p[1], p[3])
 
 
     def p_print_stmt(self, p):
         '''print_stmt : PRINT LPAREN exp_list RPAREN SEMICOLON'''
 
-        p[0] = ('<print>', p[3])
+        p[0] = ('print', p[3])
 
 
     def p_input_stmt(self, p):
@@ -141,19 +145,23 @@ class Parser:
 
         for var in p[3]:
             self.symbol_table.lookup(p, var)
-        p[0] = ('<input>', p[3])
+        p[0] = ('input', p[3])
 
 
     def p_if_stmt(self, p):
         '''if_stmt : IF LPAREN exp RPAREN LBRACE stmt_list RBRACE else_part'''
 
-        condition_type = self.symbol_table.check_type(p[3])
+        try:
+            condition_type = self.symbol_table.table[p[3]]['type'] # No lugar da função lookup
+        except:
+            condition_type = self.symbol_table.check_type(p, p[3])
+        #condition_type = self.symbol_table.check_type(p, p[3])
 
         if condition_type != 'bool':
             print(f"Erro semântico na linha {p.lineno(1)}: Condição 'if' deve ser do tipo 'bool', mas foi encontrado {condition_type}.")
             sys.exit(1)
         
-        p[0] = ('<if>', p[3], p[6], p[8])
+        p[0] = ('if', p[3], p[6], p[8])
 
 
     def p_else_part(self, p):
@@ -161,20 +169,23 @@ class Parser:
                      | empty'''
         
         if len(p) == 5:
-            p[0] = ('<else>', p[3])
+            p[0] = ('else', p[3])
         else:
             p[0] = None
 
 
     def p_while_stmt(self, p):
         '''while_stmt : WHILE LPAREN exp RPAREN LBRACE stmt_list RBRACE'''
-
-        condition_type = self.symbol_table.check_type(p[3])
+        try:
+            condition_type = self.symbol_table.table[p[3]]['type'] # No lugar da função lookup
+        except:
+            condition_type = self.symbol_table.check_type(p, p[3])
+        #condition_type =self.symbol_table.check_type(p, p[3])
 
         if condition_type != 'bool':
             print(f"Erro semântico na linha {p.lineno(1)}: Condição 'while' deve ser do tipo 'bool', mas foi encontrado {condition_type}.")
             sys.exit(1)
-        p[0] = ('<while>', p[3], p[6])
+        p[0] = ('while', p[3], p[6])
 
 
     def p_exp(self, p):
@@ -195,7 +206,7 @@ class Parser:
         if len(p) == 2:
             p[0] = p[1]
         else:
-            p[0] = ('<relop>', p[2], p[1], p[3])
+            p[0] = ('relop', p[2], p[1], p[3])
 
 
     def p_exp_arithmetic(self, p):
@@ -204,14 +215,20 @@ class Parser:
                      | term'''
         
         if len(p) == 4:
-            left_type = self.symbol_table.table[p[1]]['type']
-            right_type = self.symbol_table.table[p[3]]['type']
+            try:
+                left_type = self.symbol_table.table[p[1]]['type'] # No lugar da função lookup
+            except:
+                left_type = self.symbol_table.check_type(p, p[1])
+            try:
+                right_type = self.symbol_table.table[p[3]]['type'] # No lugar da função lookup
+            except:
+                right_type = self.symbol_table.check_type(p ,p[3])
 
             if left_type == 'bool' or left_type == 'str' or right_type == 'bool' or right_type == 'str':
                 print(f"Erro semântico na linha {p.lineno(2)}: Operação aritmética inválida entre tipos {left_type} e {right_type}.")
                 sys.exit(1)
 
-            p[0] = ('<binop>', p[2], p[1], p[3])
+            p[0] = ('binop', p[2], p[1], p[3])
         else:
             p[0] = p[1]
 
@@ -223,14 +240,20 @@ class Parser:
                 | unary'''
     
         if len(p) == 4:
-            left_type = self.symbol_table.table[p[1]]['type']
-            right_type = self.symbol_table.table[p[3]]['type']
+            try:
+                left_type = self.symbol_table.table[p[1]]['type'] # No lugar da função lookup
+            except:
+                left_type = self.symbol_table.check_type(p, p[1])
+            try:
+                right_type = self.symbol_table.table[p[3]]['type'] # No lugar da função lookup
+            except:
+                right_type = self.symbol_table.check_type(p, p[3])
 
             if left_type == 'bool' or left_type == 'str' or right_type == 'bool' or right_type == 'str':
                 print(f"Erro semântico na linha {p.lineno(2)}: Operação aritmética inválida entre tipos {left_type} e {right_type}.")
                 sys.exit(1)
 
-            p[0] = ('<binop>', p[2], p[1], p[3])
+            p[0] = ('binop', p[2], p[1], p[3])
         else:
             p[0] = p[1]
 
@@ -240,13 +263,16 @@ class Parser:
                  | MINUS factor'''
         
         if len(p) == 3:
-            type_factor = self.symbol_table.check_type(p[2])
-            
+            try:
+                type_factor = self.symbol_table.table[p[2]]['type'] # No lugar da função lookup
+            except:
+                type_factor = self.symbol_table.check_type(p, p[2])
+
             if type_factor != 'bool' and type_factor != 'str' and p[1] == '-':
-                p[0] = ('<unary>', p[1], p[2])
+                p[0] = ('unary', p[1], p[2])
 
             elif type_factor == 'bool' and p[1] == '!':
-                p[0] = ('<unary>', p[1], p[2])
+                p[0] = ('unary', p[1], p[2])
 
             else:
                 print(f"Erro semântico na linha {p.lineno(1)}: Operação unária inválida. Uso do operador unário {p[1]} com o tipo {type_factor}.")

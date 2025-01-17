@@ -1,6 +1,4 @@
 Program erroSintatico_p_error{
-    int x;
-    if (true){
-
+    int x
     
 }
