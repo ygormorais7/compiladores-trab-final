@@ -1,7 +1,4 @@
-Program const2{
-    const var = 1;
-    int var2 = 2;
+Program erroSemantico_p_decl{
+    int x = "aa";
 
-
-    var2 = var2/var;
 }

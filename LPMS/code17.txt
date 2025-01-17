@@ -1,0 +1,6 @@
+Program erroSemantico_table_const{
+    const var = 1;
+    int var2 = 2;
+
+    var = var2/var;
+}

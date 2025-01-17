@@ -1,0 +1,7 @@
+Program erroSemantico_p_unary{
+    bool var;
+
+    var = !(false == true);
+    var = !(true > true);
+    var = -(3 == 2);
+}

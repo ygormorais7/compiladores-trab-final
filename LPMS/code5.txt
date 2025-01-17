@@ -1,21 +1,6 @@
-Program Maior_Menor {
-    float a;
-    float b;
+Program const2{
+    const var = 1;
+    int var2 = 2;
 
-    input(a);
-    input(b);
-
-    if (a > b){
-        print("Maior: ");
-        print(a);
-    }
-    else{
-        if( a < b){
-            print("Maior: ");
-            print(b);
-        }
-        else{
-            print("Iguais!");
-        }
-    }
+    var2 = var2/var;
 }

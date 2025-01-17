@@ -1,0 +1,4 @@
+Program erroSemantico_table_assign_lookup{
+    x = 1;
+
+}

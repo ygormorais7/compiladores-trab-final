@@ -1,28 +1,50 @@
+import sys
+
 class SymbolTable:
     def __init__(self):
         self.table = {}
 
-    def declare(self, name, var_type, value=None):
+    def __str__(self):
+        return str(self.table)
+
+
+    def declare(self, p, name, var_type, value=None):
+        if value == None:
+            if var_type == 'str':
+                value = ""
+            elif var_type == 'bool':
+                value = 'false'
+            elif var_type == 'int' or var_type == 'float':
+                value = 0
+
         if name in self.table:
-            raise Exception(f"Erro semântico: Variável '{name}' já declarada.")
+            print(f"Erro semântico na linha {p.lineno(3)}: Variável '{name}' já declarada.")
+            sys.exit(1)
+        
+        print("26",self.check_type(value))
         if var_type == 'const':
-            self.table[name] = {'type': type(value), 'value': None, 'const': True}
+            self.table[name] = {'type': self.check_type(value), 'value': None, 'const': True}
         else:
             self.table[name] = {'type': var_type, 'value': None}
 
-    def assign(self, name, value):
+
+    def assign(self, p, name, value):
         if name not in self.table:
-            raise Exception(f"Erro semântico: Variável '{name}' não declarada.")
+            print(f"Erro semântico na linha {p.lineno(2)}: Variável '{name}' não declarada.")
+            sys.exit(1)
         
         if 'const' in self.table[name].keys():
             if self.table[name]['value'] != None:
                 raise Exception(f"Erro ao reatribuir valor ao const")
+                sys.exit(1)
             
         self.table[name]['value'] = value
 
-    def lookup(self, name):
+
+    def lookup(self, p, name):
         if name not in self.table:
-            raise Exception(f"Erro semântico: Variável '{name}' não declarada.")
+            print(f"Erro semântico na linha {p.lineno(2)}: Variável '{name}' não declarada.")
+            sys.exit(1)
         return self.table[name]['type']
 
 
@@ -46,14 +68,13 @@ class SymbolTable:
                     right_type = self.check_type(p[3])
                     if left_type != right_type:
                         raise Exception(f"Erro semântico: Operação inválida entre tipos {left_type} e {right_type}.")
+                        sys.exit(1)
                     return left_type
                 elif p[0] == 'relop':  # Operação relacional
                     left_type = self.check_type(p[2])
                     right_type = self.check_type(p[3])
                     if left_type != right_type:
                         raise Exception(f"Erro semântico: Comparação inválida entre tipos {left_type} e {right_type}.")
+                        sys.exit(1)
                     return 'bool'  # Operações relacionais retornam um booleano
 
-
-    def __str__(self):
-        return str(self.table)

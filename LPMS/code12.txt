@@ -1,0 +1,7 @@
+Program erroSemantico_p_exp_arithmetic{
+    str str1;
+    int x;
+    int y;
+
+    y = str1 - x;
+}

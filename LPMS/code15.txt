@@ -1,0 +1,5 @@
+Program erroSemantico_table_declare{
+    int x;
+    
+    int x;
+}

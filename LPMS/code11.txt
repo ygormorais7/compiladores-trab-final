@@ -1,0 +1,9 @@
+Program erroSemantico_p_while_stmt{
+    int x = 1;
+
+    while("true"){
+        x = x + 1;
+        print(x);
+    }
+
+}

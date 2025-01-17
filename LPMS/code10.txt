@@ -1,7 +1,6 @@
-Program dsadsa{
-    bool var;
+Program erroSemantico_p_if_stmt{
+    if (1-2){
+        print("arroz");
+    }
 
-    var = !(true == true);
-    var = -(true == true);
-    var = -(true == 2);
 }

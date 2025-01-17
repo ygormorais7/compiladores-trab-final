@@ -1,15 +1,8 @@
-Program Fatorial {
-    int fat, res;
+Program logico{
+    bool a = true;
+    bool b, c;
+    
+    b = 2>3;
 
-    res = 1;
-
-    input(fat);
-
-    while( fat > 1 ){
-        print (res);
-        res = res * (fat - 1);
-    }
-
-    print("Resultado final:");
-    print(res);
+    print(a==b);
 }
