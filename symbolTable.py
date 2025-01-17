@@ -34,7 +34,7 @@ class SymbolTable:
         
         if 'const' in self.table[name].keys():
             if self.table[name]['value'] != None:
-                raise Exception(f"Erro ao reatribuir valor ao const")
+                print(f"Erro semântico na linha {p.lineno(2)}: Tentativa de reatribuir valor a um tipo const")
                 sys.exit(1)
             
         self.table[name]['value'] = value
@@ -66,14 +66,13 @@ class SymbolTable:
                     left_type = self.check_type(p[2])
                     right_type = self.check_type(p[3])
                     if left_type != right_type:
-                        raise Exception(f"Erro semântico: Operação inválida entre tipos {left_type} e {right_type}.")
+                        print(f"Erro semântico na linha {p.lineno(2)}: Operação inválida entre tipos {left_type} e {right_type}.")
                         sys.exit(1)
                     return left_type
                 elif p[0] == 'relop':  # Operação relacional
                     left_type = self.check_type(p[2])
                     right_type = self.check_type(p[3])
                     if left_type != right_type:
-                        raise Exception(f"Erro semântico: Comparação inválida entre tipos {left_type} e {right_type}.")
+                        print(f"Erro semântico na linha {p.lineno(2)}: Comparação inválida entre tipos {left_type} e {right_type}.")
                         sys.exit(1)
                     return 'bool'  # Operações relacionais retornam um booleano
-
