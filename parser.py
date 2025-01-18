@@ -133,8 +133,23 @@ class Parser:
     def p_assign_stmt(self, p):
         '''assign_stmt : ID ASSIGN exp SEMICOLON'''
 
-        var_type = self.symbol_table.lookup(p, p[1])
+        try:
+            var_type = self.symbol_table.table[p[1]]['type'] # No lugar da função lookup
+        except:
+            var_type = self.symbol_table.check_type(p, p[1])
+        try:
+            exp_type = self.symbol_table.table[p[3]]['type'] # No lugar da função lookup
+        except:
+            exp_type = self.symbol_table.check_type(p, p[3])
+        
+        if var_type == 'int' and exp_type == 'float':
+            print(f"Observação truncamento na linha {p.lineno(1)}: Valor float atribuido a variável integer.")
+            p[3] = int(p[3])
 
+        if var_type == 'float' and exp_type == 'int':
+            print(f"Observação realocamento na linha {p.lineno(1)}: Valor integer atribuido a variável float.")
+            p[3] = float(p[3])
+        
         if var_type == 'str' and not isinstance(p[3], str):
             print(f"Erro semântico na linha {p.lineno(1)}: Atribuição inválida. Esperado string entre aspas, mas encontrado {p[3]}.")
             sys.exit(1)

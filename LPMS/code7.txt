@@ -1,0 +1,5 @@
+Program atribuicao_errada{
+    int x;
+
+    x = 1.99;
+}
