@@ -1,7 +1,5 @@
-Program const2{
-    const var = 1;
-    int var2 = 2;
+Program atribuicao_errada{
+    int x;
 
-
-    var2 = var2/var;
+    x = 1.99;
 }

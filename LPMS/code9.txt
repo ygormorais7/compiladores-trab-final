@@ -1,8 +1,7 @@
-Program not{
-    bool var;
-    bool var2;
+Program erroSemantico_p_assign_stmt{
+    int x;
+    int y;
+    str str1;
 
-    var = true;
-
-    var2 = !var;
+    str1 = x - y;
 }

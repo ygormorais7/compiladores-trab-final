@@ -1,8 +1,8 @@
-Program logico{
-    bool a = true;
-    bool b, c;
-    
-    b = 2>3;
+Program not{
+    bool var;
+    bool var2;
 
-    print(a==b);
+    var = true;
+
+    var2 = !var;
 }

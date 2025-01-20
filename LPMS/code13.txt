@@ -1,0 +1,7 @@
+Program erroSemantico_p_term{
+    str str1;
+    int x;
+    float y;
+
+    y = str1 * x;
+}
