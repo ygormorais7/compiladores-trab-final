@@ -17,28 +17,67 @@ class Parser:
     def parse(self, data):
         result = self.parser.parse(data, lexer=self.lexer.lexer)
         formatted_result = self.format_output(result)
-        #self.print_derivation_tree(result)
-        return formatted_result
+        return result
     
+    def process_complex_item(self, item):
+        if isinstance(item, (list, tuple)):
+            result = []
+            for sub_item in item:
+                processed = self.process_complex_item(sub_item)
+                if isinstance(processed, list):
+                    result.extend(processed)
+                else:
+                    result.append(processed)
+            return result
+        else:
+            return str(item)
+            
+    def process_complex_item(self, item):
+        if isinstance(item, tuple):
+            items = [item[0]]
+            for sub_item in item[1:]:
+                if isinstance(sub_item, (list, tuple)):
+                    processed = self.process_complex_item(sub_item)
+                    items.extend(processed)
+                else:
+                    items.append(str(sub_item))
+            return items
+        elif isinstance(item, list):
+            result = []
+            for sub_item in item:
+                if isinstance(sub_item, (list, tuple)):
+                    processed = self.process_complex_item(sub_item)
+                    result.extend(processed)
+                else:
+                    result.append(str(sub_item))
+            return result
+        return [str(item)]
+
+
     def format_output(self, node):
         if isinstance(node, tuple):
-            return f"({node[0]}, {', '.join(self.format_output(child) for child in node[1:])})"
+            if node[0] == 'program':
+                return f"('program', '{node[1]}', {self.format_output(node[2])}, {self.format_output(node[3])})"
+                
+            items = [node[0]]
+            for item in node[1:]:
+                if isinstance(item, (list, tuple)):
+                    processed = self.process_complex_item(item)
+                    items.extend(processed)
+                else:
+                    items.append(str(item))
+            return "(" + ", ".join(f"'{item}'" if isinstance(item, str) else str(item) for item in items) + ")"
+            
         elif isinstance(node, list):
-            return f"[{', '.join(self.format_output(item) for item in node)}]"
+            if not node:
+                return "[]"
+            items = [self.format_output(item) for item in node]
+            return "[\n" + ",\n".join(items) + "\n]"
+        
         else:
+            if isinstance(node, str):
+                return f"'{node}'"
             return str(node)
-
-    def print_derivation_tree(self, node, indent=''):
-        if isinstance(node, tuple):
-            print(indent + str(node[0]))
-            for child in node[1:]:
-                self.print_derivation_tree(child, indent + ' __ ')
-        elif isinstance(node, list):
-            for item in node:
-                self.print_derivation_tree(item, indent)
-        else:
-            print(indent + str(node))
-
     # Regras da gramática
     def p_program(self, p):
         '''program : PROGRAM ID LBRACE decl_list stmt_list RBRACE'''
