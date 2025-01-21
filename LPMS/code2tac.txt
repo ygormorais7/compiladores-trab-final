@@ -1,0 +1,21 @@
+t1 = input()
+t2 = input()
+t3 = t1 > t2
+if t3 goto L1
+goto L2
+L1:
+print("Maior: ")
+print(t1)
+goto L3
+L2:
+t1 = t1 < t2
+if t1 goto L4
+goto L5
+L4:
+print("Maior: ")
+print(t2)
+goto L6
+L5:
+print("Iguais!")
+L6:
+L3:

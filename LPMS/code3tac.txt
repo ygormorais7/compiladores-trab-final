@@ -1,0 +1,13 @@
+t1 = 1
+t2 = input()
+L1:
+t3 = 1
+t1 = t2 > t3
+if t1 goto L2
+goto L3
+L2:
+print(t1)
+goto L1
+L3:
+print("Resultado final:")
+print(t1)

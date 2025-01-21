@@ -43,16 +43,29 @@ class tacGen:
     def process_assignment(self, stmt):
         _, var, value = stmt
         code = []
-        if isinstance(value, tuple) and value[0] == 'binop':
-            _, op, left, right = value
-            t1 = self.load_value(left, code)
-            t2 = self.load_value(right, code)
-            t3 = self.next_temp()
-            code.append(f"{t3} = {t1} {op} {t2}")
-            self.var_map[var] = t3
+        if isinstance(value, tuple):
+            if value[0] == 'relop':
+                _, op, left, right = value
+                t1 = self.load_value(left, code)
+                t2 = self.load_value(right, code)
+                t3 = self.next_temp()
+                code.append(f"{t3} = {t1} {op} {t2}")
+                self.var_map[var] = t3
+            elif value[0] == 'unary':
+                _, op, operand = value
+                t1 = self.load_value(operand, code)
+                t2 = self.next_temp()
+                code.append(f"{t2} = {op} {t1}")
+                self.var_map[var] = t2
+            elif value[0] == 'binop':
+                _, op, left, right = value
+                t1 = self.load_value(left, code)
+                t2 = self.load_value(right, code)
+                t3 = self.next_temp()
+                code.append(f"{t3} = {t1} {op} {t2}")
+                self.var_map[var] = t3
         else:
-            temp = self.next_temp()
-            code.append(f"{temp} = {value}")
+            temp = self.load_value(value, code)
             self.var_map[var] = temp
         return code
 
@@ -117,11 +130,37 @@ class tacGen:
         return None
 
     def load_value(self, value, code):
-        if isinstance(value, (int, float)):
+        if isinstance(value, tuple):
+            if value[0] == 'relop':
+                _, op, left, right = value
+                t1 = self.load_value(left, code)
+                t2 = self.load_value(right, code)
+                temp = self.next_temp()
+                code.append(f"{temp} = {t1} {op} {t2}")
+                return temp
+            elif value[0] == 'unary':
+                _, op, operand = value
+                t1 = self.load_value(operand, code)
+                temp = self.next_temp()
+                code.append(f"{temp} = {op} {t1}")
+                return temp
+            elif value[0] == 'binop':
+                _, op, left, right = value
+                t1 = self.load_value(left, code)
+                t2 = self.load_value(right, code)
+                temp = self.next_temp()
+                code.append(f"{temp} = {t1} {op} {t2}")
+                return temp
+        elif isinstance(value, str) and value in self.var_map:
+            return self.var_map[value]
+        elif isinstance(value, str) and value in ('true', 'false'):
+            temp = self.next_temp()
+            code.append(f"{temp} = {1 if value == 'true' else 0}")
+            return temp
+        else:
             temp = self.next_temp()
             code.append(f"{temp} = {value}")
             return temp
-        return self.var_map.get(value, value)
 
     def process_print(self, stmt):
         code = []
