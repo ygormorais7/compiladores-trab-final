@@ -104,6 +104,68 @@ class tacGen:
             code.append(f"{temp} = {value}")
             return temp
 
+
+    def process_if(self, stmt):
+        _, condition, if_body, else_part = stmt
+        code = []
+
+        # Processar condição
+        cond_temp = self.process_condition(condition, code)
+
+        true_label = self.new_label()
+        false_label = self.new_label()
+        end_label = self.new_label()
+
+        code.append(f"if {cond_temp} goto {true_label}")
+        code.append(f"goto {false_label}")
+
+        # Bloco if
+        code.append(f"{true_label}:")
+        for if_stmt in if_body:
+            code.extend(self.process_statement(if_stmt))
+        code.append(f"goto {end_label}")
+
+        # Bloco else
+        code.append(f"{false_label}:")
+        if else_part:
+            for else_stmt in else_part[1]:
+                code.extend(self.process_statement(else_stmt))
+
+        code.append(f"{end_label}:")
+        return code
+
+    def process_while(self, stmt):
+        _, condition, body = stmt
+        code = []
+
+        start_label = self.new_label()
+        body_label = self.new_label()
+        end_label = self.new_label()
+
+        code.append(f"{start_label}:")
+        cond_temp = self.process_condition(condition, code)
+        code.append(f"if {cond_temp} goto {body_label}")
+        code.append(f"goto {end_label}")
+
+        code.append(f"{body_label}:")
+        for body_stmt in body:
+            code.extend(self.process_statement(body_stmt))
+        code.append(f"goto {start_label}")
+
+        code.append(f"{end_label}:")
+        return code
+
+    def process_condition(self, condition, code):
+        if condition[0] == 'relop':
+            _, op, left, right = condition
+            t1 = self.load_value(left, code)
+            t2 = self.load_value(right, code)
+            t3 = self.next_temp()
+            code.append(f"{t3} = {t1} {op} {t2}")
+            return t3
+        return None
+
+
     def process_print(self, stmt):
         code = []
         for expr in stmt[1]:
