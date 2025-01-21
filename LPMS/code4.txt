@@ -3,6 +3,6 @@ Program logico{
     bool b, c;
     
     b = 2>3;
-
-    print(a==b);
+    c = a==b;
+    print(c);
 }
