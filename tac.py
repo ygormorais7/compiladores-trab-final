@@ -1,6 +1,6 @@
 class tacGen:
     def __init__(self):
-        self.temp_vars = ["t1", "t2", "t3"]
+        self.temp_vars = ["t1", "t2", "t3", "t4"]
         self.temp_index = 0
         self.var_map = {}
         self.label_count = 0
@@ -21,10 +21,37 @@ class tacGen:
         _, _, declarations, statements = program
         code = []
         
+        for decl in declarations:
+            code.extend(self.process_declaration(decl))
+        
         for stmt in statements:
             code.extend(self.process_statement(stmt))
         
         return "\n".join(code)
+
+    def process_declaration(self, decl):
+        code = []
+        if decl[0] == 'var_decl_with_assignment':
+            _, var_type, var, value = decl
+            temp = self.load_value(value, code)
+            self.var_map[var] = temp
+            code.append(f"{var} = {temp}")
+        elif decl[0] == 'var_decl':
+            _, var_type, vars = decl
+            for var in vars:
+                if var_type == 'bool':
+                    self.var_map[var] = 'false'
+                    code.append(f"{var} = false")
+                elif var_type == 'float':
+                    self.var_map[var] = '0.0'
+                    code.append(f"{var} = 0.0")
+                elif var_type == 'int':
+                    self.var_map[var] = '0'
+                    code.append(f"{var} = 0")
+                elif var_type == 'str':
+                    self.var_map[var] = '""'
+                    code.append(f'{var} = ""')
+        return code
 
     def process_statement(self, stmt):
         code = []
@@ -51,12 +78,14 @@ class tacGen:
                 t3 = self.next_temp()
                 code.append(f"{t3} = {t1} {op} {t2}")
                 self.var_map[var] = t3
+                code.append(f"{var} = {t3}")
             elif value[0] == 'unary':
                 _, op, operand = value
                 t1 = self.load_value(operand, code)
                 t2 = self.next_temp()
                 code.append(f"{t2} = {op} {t1}")
                 self.var_map[var] = t2
+                code.append(f"{var} = {t2}")
             elif value[0] == 'binop':
                 _, op, left, right = value
                 t1 = self.load_value(left, code)
@@ -64,9 +93,11 @@ class tacGen:
                 t3 = self.next_temp()
                 code.append(f"{t3} = {t1} {op} {t2}")
                 self.var_map[var] = t3
+                code.append(f"{var} = {t3}")
         else:
             temp = self.load_value(value, code)
             self.var_map[var] = temp
+            code.append(f"{var} = {temp}")
         return code
 
     def process_if(self, stmt):
@@ -154,9 +185,7 @@ class tacGen:
         elif isinstance(value, str) and value in self.var_map:
             return self.var_map[value]
         elif isinstance(value, str) and value in ('true', 'false'):
-            temp = self.next_temp()
-            code.append(f"{temp} = {1 if value == 'true' else 0}")
-            return temp
+            return value
         else:
             temp = self.next_temp()
             code.append(f"{temp} = {value}")
