@@ -160,6 +160,25 @@ class tacGen:
             return t3
         return None
 
+    def process_print(self, stmt):
+        code = []
+        for expr in stmt[1]:
+            if expr.startswith('"'):
+                code.append(f"param {expr}")
+            else:
+                code.append(f"param {self.var_map.get(expr, expr)}")
+            code.append("call print 1")
+        return code
+
+    def process_input(self, stmt):
+        code = []
+        temp = self.next_temp()
+        code.append("call input 0")
+        code.append(f"{temp} = return_value")
+        self.var_map[stmt[1][0]] = temp
+        return code
+
+
     def load_value(self, value, code):
         if isinstance(value, tuple):
             if value[0] == 'relop':
@@ -194,19 +213,3 @@ class tacGen:
             temp = self.next_temp()
             code.append(f"{temp} = {value}")
             return temp
-
-    def process_print(self, stmt):
-        code = []
-        for expr in stmt[1]:
-            if expr.startswith('"'):
-                code.append(f"print({expr})")
-            else:
-                code.append(f"print({self.var_map.get(expr, expr)})")
-        return code
-
-    def process_input(self, stmt):
-        code = []
-        temp = self.next_temp()
-        code.append(f"{temp} = input()")
-        self.var_map[stmt[1][0]] = temp
-        return code
