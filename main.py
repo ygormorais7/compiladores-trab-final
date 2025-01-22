@@ -29,7 +29,7 @@ print(result)
 
 # Gera o código de três endereços (TAC)
 generator = tacGen()
-tac = generator.generate_code(result)
+tac = generator.process_program(result)
 
 # Exibe o código de três endereços gerado
 print("\nCódigo de Três Endereços (TAC):")

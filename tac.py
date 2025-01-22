@@ -14,9 +14,6 @@ class tacGen:
         self.label_count += 1
         return f"L{self.label_count}"
 
-    def generate_code(self, tree):
-        return self.process_program(tree)
-
     def process_program(self, program):
         _, _, declarations, statements = program
         code = []
@@ -36,6 +33,7 @@ class tacGen:
             temp = self.load_value(value, code)
             self.var_map[var] = temp
             code.append(f"{var} = {temp}")
+
         elif decl[0] == 'var_decl':
             _, var_type, vars = decl
             for var in vars:
@@ -79,6 +77,7 @@ class tacGen:
                 code.append(f"{t3} = {t1} {op} {t2}")
                 self.var_map[var] = t3
                 code.append(f"{var} = {t3}")
+
             elif value[0] == 'unary':
                 _, op, operand = value
                 t1 = self.load_value(operand, code)
@@ -86,6 +85,7 @@ class tacGen:
                 code.append(f"{t2} = {op} {t1}")
                 self.var_map[var] = t2
                 code.append(f"{var} = {t2}")
+                
             elif value[0] == 'binop':
                 _, op, left, right = value
                 t1 = self.load_value(left, code)
@@ -169,12 +169,14 @@ class tacGen:
                 temp = self.next_temp()
                 code.append(f"{temp} = {t1} {op} {t2}")
                 return temp
+            
             elif value[0] == 'unary':
                 _, op, operand = value
                 t1 = self.load_value(operand, code)
                 temp = self.next_temp()
                 code.append(f"{temp} = {op} {t1}")
                 return temp
+            
             elif value[0] == 'binop':
                 _, op, left, right = value
                 t1 = self.load_value(left, code)
@@ -182,8 +184,10 @@ class tacGen:
                 temp = self.next_temp()
                 code.append(f"{temp} = {t1} {op} {t2}")
                 return temp
+            
         elif isinstance(value, str) and value in self.var_map:
             return self.var_map[value]
+        
         elif isinstance(value, str) and value in ('true', 'false'):
             return value
         else:
