@@ -7,7 +7,6 @@ Program Fatorial {
 
     while( fat > 1 ){
         print (res);
-        
     }
 
     print("Resultado final:");

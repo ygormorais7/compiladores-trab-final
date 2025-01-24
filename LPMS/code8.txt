@@ -1,4 +1,6 @@
-Program erroSemantico_p_decl{
-    int x = "aa";
+Program teste1{
+    str msg;
+    msg = "batata doce";
 
+    print(msg);
 }
