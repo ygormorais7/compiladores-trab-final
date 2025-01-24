@@ -2,7 +2,7 @@ import sys
 from lexer import Lexer
 from parser import Parser
 from tac import tacGen
-from assembly import TACtoAssembly
+from asm import tac_to_assembly
 
 if len(sys.argv) != 2:
     print("Uso: python main.py <arquivo>")
@@ -25,19 +25,14 @@ parser.build()
 result = parser.parse(data)
 
 # Exibe a saída da análise sintática (opcional)
-print("Árvore Sintática:\n",result)
+print(f"Árvore Sintática:\n-=-=-=-=-=-=-=-\n{result}\n-=-=-=-=-=-=-=-\n")
 
 # Gera o código de três endereços (TAC)
 generator = tacGen()
-tac = generator.process_program(result)
-print("\nTAC:")
-print(tac)
+visu_tac, tac = generator.process_program(result)
+print(f"Código de Três Endereços:\n-=-=-=-=-=-=-=-\n{visu_tac}\n-=-=-=-=-=-=-=-\n")
 
-# Traduz o TAC para Assembly
-assembly_generator = TACtoAssembly()
-tac_lines = tac.split("\n")  # Divide o TAC em linhas para passar ao tradutor
-assembly_code = assembly_generator.translate(tac_lines)
-
-# Exibe o código Assembly gerado
-print("\nCódigo Assembly:")
-print(assembly_code)
+asm = tac_to_assembly(tac)
+print(f"Código Assembly x86_64:\n-=-=-=-=-=-=-=-\n{asm}-=-=-=-=-=-=-=-\n")
+with open("output.asm", "w") as f:
+    f.write(asm)

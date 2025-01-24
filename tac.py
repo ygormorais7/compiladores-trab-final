@@ -21,7 +21,7 @@ class tacGen:
         for stmt in statements:
             code.extend(self.process_statement(stmt))
 
-        return "\n".join(code)
+        return "\n".join(code), code
 
     def process_declaration(self, decl):
         if decl[0] == 'var_decl_with_assignment':
