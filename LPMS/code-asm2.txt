@@ -1,0 +1,13 @@
+Program compare_bool{
+    int x;
+    int y;
+    bool z;
+    
+    x = 10;
+    y = 20;
+
+    z = x == y;
+
+    print("Resultado: ");
+    print(z);
+}
