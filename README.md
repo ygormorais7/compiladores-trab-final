@@ -20,4 +20,6 @@
   - nasm -f elf64 -o assmbl.o output.asm; ld assmbl.o -o assmbl; ./assmbl
   - echo $? (apenas caso o código seja para impressão de inteiros, por exemplo, LPMS/code-asm3.txt)
 
-# Visualizações:
+### Observações:
+
+- A geração de código assembly foi testada com os arquivos com o padrão: LPMS/code-asm.txt

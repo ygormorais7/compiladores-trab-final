@@ -14,7 +14,6 @@ def tac_to_assembly(tac_code):
     operacoes = ["+", "-", "=="]
     
     temp_vars = {}
-    param_vars = {}
     labels = {}
 
     for line in tac_code:
@@ -98,6 +97,22 @@ def tac_to_assembly(tac_code):
                 temp_vars[var] = value
             else:
                 raise ValueError(f"Operação não suportada: {line}")
+        
+        elif line.startswith("while"):
+            _, condition, _
+
+        elif line.startswith("if"):
+            _, condition, _, label = line.split()
+            text_section += f"    je .{label}\n"
+
+        elif line.startswith("goto"):
+            _, label = line.split()
+            text_section += f"    jmp .{label}\n"
+
+        elif line.startswith("L") and ":" in line:
+            label = line.replace(":", "")
+            labels[label] = True
+            text_section += f".{label}:\n"
 
         elif line.startswith("param"):
             _, param = line.split(maxsplit=1)
