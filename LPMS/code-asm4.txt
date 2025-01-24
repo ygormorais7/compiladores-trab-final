@@ -1,0 +1,13 @@
+Program atribuicao_errada{
+    int x;
+    int y;
+
+    x = 10;
+    y = 20;
+
+    if (x == y){
+        print("Iguais");
+    }else{
+        print("Diferentes");
+    }
+}
